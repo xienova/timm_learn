@@ -4,13 +4,14 @@ import torch
 from PIL import Image
 from pprint import pprint
 
-url = 'https://datasets-server.huggingface.co/assets/imagenet-1k/--/default/test/12/image/image.jpg'
+url = 'https://datasets-server.huggingface.co/assets/imagenet-1k/--/default/test/12/image/image.jpg'  # 一只小狗
 image = Image.open(requests.get(url, stream=True).raw)
 
 # 新建模型
 model = timm.create_model('mobilenetv3_large_100', pretrained=True).eval()
 # 用模型的参数新建转换器
-transform = timm.data.create_transform(**timm.data.resolve_data_config(model.pretrained_cfg))
+data_config = timm.data.resolve_data_config(model.pretrained_cfg)
+transform = timm.data.create_transform(**data_config,is_training=False)
 # 将图片传到转换器预处理
 image_tensor = transform(image)
 # 将预处理后的图片送至模型处理
